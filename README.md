@@ -8,7 +8,7 @@ Bot que contesta automático los mensajes de Facebook Messenger e Instagram DM d
 1. Prospecto escribe → contesta al instante (Claude, con precio/servicio ya cargado).
 2. Silencio del prospecto → a los 15 min: 1 mensaje de seguimiento ("¿te quedó alguna duda?").
 3. Sigue sin contestar → a los 45 min: se manda el flyer, y se detiene. No más mensajes.
-4. Los mensajes que INICIA el bot (seguimiento/flyer) solo salen 9:00–18:00 hora Tijuana. Fuera de
+4. Los mensajes que INICIA el bot (seguimiento/flyer) solo salen 9:00–20:00 hora Tijuana. Fuera de
    ese horario se esperan hasta las 9:00 del día siguiente. Las respuestas a algo que el prospecto
    SÍ escribió salen siempre, a cualquier hora.
 

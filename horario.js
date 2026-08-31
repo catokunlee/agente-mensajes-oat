@@ -9,7 +9,7 @@ export function dentroDeHorario(fecha = new Date()) {
       hour12: false,
     }).format(fecha)
   );
-  return hora >= 9 && hora < 18;
+  return hora >= 9 && hora < 20;
 }
 
 // Próxima marca de las 9:00 (hoy si aún no llega, mañana si ya pasó el horario)
@@ -28,10 +28,10 @@ export function proximaAperturaHorario(fecha = new Date()) {
   const horaActual = Number(partes.hour);
 
   const base = new Date(fecha);
-  if (horaActual >= 18) base.setDate(base.getDate() + 1);
+  if (horaActual >= 20) base.setDate(base.getDate() + 1);
   // fija a las 9:00 en zona Tijuana de forma aproximada (offset fijo -8/-7, suficiente para este uso)
   const iso = `${partes.year}-${partes.month}-${partes.day}T09:00:00`;
   const apertura = new Date(iso);
-  if (horaActual >= 18) apertura.setDate(apertura.getDate() + 1);
+  if (horaActual >= 20) apertura.setDate(apertura.getDate() + 1);
   return apertura;
 }
