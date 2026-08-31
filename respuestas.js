@@ -34,5 +34,6 @@ export async function generarRespuesta(mensajeUsuario, historial = []) {
     messages: mensajes,
   });
 
-  return respuesta.content[0].text.trim();
+  const bloqueTexto = respuesta.content.find((b) => b.type === "text");
+  return (bloqueTexto?.text || "").trim();
 }
