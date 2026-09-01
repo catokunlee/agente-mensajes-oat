@@ -9,6 +9,7 @@ const app = express();
 app.use(express.json());
 
 const VERIFY_TOKEN = process.env.META_WEBHOOK_VERIFY_TOKEN_OAT || "oat-verify-2026";
+const PAUSA_HORAS = 24; // si Abraham contesta a mano, el bot se calla esta conversación este tiempo
 
 // Verificación del webhook (Meta la llama una vez al configurar)
 app.get("/webhook", (req, res) => {
@@ -34,18 +35,41 @@ app.post("/webhook", async (req, res) => {
     const eventos = entrada.messaging || [];
 
     for (const evento of eventos) {
-      const remitenteId = evento.sender?.id;
       const texto = evento.message?.text;
-      if (!remitenteId || !texto) continue;
-      if (evento.message?.is_echo) continue; // ignorar mensajes que mandó la propia página
+      if (!texto) continue;
+
+      if (evento.message?.is_echo) {
+        // Mensaje que salió de la página. Si NO trae app_id, no lo mandó el bot (sale
+        // vía API con app_id) — lo mandó un humano a mano desde el inbox. Pausar ahí.
+        if (!evento.message.app_id) {
+          const clienteId = evento.recipient?.id;
+          if (clienteId) pausarPorHumano(canal, clienteId);
+        }
+        continue;
+      }
+
+      const remitenteId = evento.sender?.id;
+      if (!remitenteId) continue;
 
       await procesarMensaje(canal, remitenteId, texto);
     }
   }
 });
 
+function pausarPorHumano(canal, id) {
+  actualizarConversacion(canal, id, {
+    pausadoHasta: Date.now() + PAUSA_HORAS * 60 * 60 * 1000,
+  });
+  console.log(`[index] ${canal}:${id} pausado — Abraham ya está contestando a mano`);
+}
+
 async function procesarMensaje(canal, id, texto) {
   const conv = obtenerConversacion(canal, id) || { historial: [] };
+
+  if (conv.pausadoHasta && conv.pausadoHasta > Date.now()) {
+    console.log(`[index] ${canal}:${id} sigue pausado (Abraham contestando a mano), bot no responde`);
+    return;
+  }
 
   const respuesta = await generarRespuesta(texto, conv.historial);
 

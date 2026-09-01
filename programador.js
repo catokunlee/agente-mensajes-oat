@@ -24,6 +24,7 @@ async function revisarPendientes() {
 
   for (const [clave, conv] of Object.entries(conversaciones)) {
     if (conv.detenido) continue;
+    if (conv.pausadoHasta && conv.pausadoHasta > ahora) continue; // Abraham contestando a mano
     if (!conv.ultimoMensajeUsuario) continue;
 
     const [canal, id] = clave.split(":");
