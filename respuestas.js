@@ -50,13 +50,19 @@ export async function generarRespuesta(mensajeUsuario, historial = []) {
     { role: "user", content: mensajeUsuario },
   ];
 
-  const respuesta = await anthropic.messages.create({
-    model: "claude-sonnet-5",
-    max_tokens: 1024,
-    system: CONTEXTO,
-    messages: mensajes,
-  });
+  for (let intento = 0; intento < 2; intento++) {
+    const respuesta = await anthropic.messages.create({
+      model: "claude-sonnet-5",
+      max_tokens: 1024,
+      system: CONTEXTO,
+      messages: mensajes,
+    });
 
-  const bloqueTexto = respuesta.content.find((b) => b.type === "text");
-  return (bloqueTexto?.text || "").trim();
+    const bloqueTexto = respuesta.content.find((b) => b.type === "text");
+    const texto = (bloqueTexto?.text || "").trim();
+    if (texto) return texto;
+    console.error("[respuestas] respuesta vacía, reintento", intento + 1);
+  }
+
+  return "Disculpa, tuvimos un detalle técnico. ¿Nos repites tu mensaje?";
 }
