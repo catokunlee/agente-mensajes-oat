@@ -52,7 +52,7 @@ export async function generarRespuesta(mensajeUsuario, historial = []) {
 
   const respuesta = await anthropic.messages.create({
     model: "claude-sonnet-5",
-    max_tokens: 300,
+    max_tokens: 1024,
     system: CONTEXTO,
     messages: mensajes,
   });
